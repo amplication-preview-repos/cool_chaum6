@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Report {
+  id        String            @id @default(cuid())
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  content   String?
+  status    EnumReportStatus?
+  project   Project?          @relation(fields: [projectId], references: [id])
+  projectId String?
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  name      String?
+  email     String?
+  company   String?
+  phone     String?
+  projects  Project[]
+}
+
+model Project {
+  id          String             @id @default(cuid())
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  description String?
+  status      EnumProjectStatus?
+  name        String?
+  client      Client?            @relation(fields: [clientId], references: [id])
+  clientId    String?
+  reports     Report[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  roles     Json
+}
+
+enum EnumReportStatus {
+  Option1
+}
+
+enum EnumProjectStatus {
+  Option1
+}
